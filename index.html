@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tara's Kitchen</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <nav class="navbar" :class="{ scrolled: isScrolled }">
+        <div class="nav-logo">
+            <img src="./Assets/logo.png" alt="Tara's Kitchen">
+        </div>
+
+        <ul class="nav-links desktop-links">
+          <li><a href="#about"   @click="closeMenu">About</a></li>
+          <li><a href="#menu"    @click="closeMenu">Menu</a></li>
+          <li><a href="#contact" @click="closeMenu">Contact</a></li>
+        </ul>
+
+        <button class="hamburger" @click="menuOpen = !menuOpen" aria-label="Toggle menu">
+          <span :class="{ open: menuOpen }"></span>
+          <span :class="{ open: menuOpen }"></span>
+          <span :class="{ open: menuOpen }"></span>
+        </button>
+      </nav>
+
+      <div class="mobile-menu" v-show="menuOpen">
+        <a href="#about"   @click="closeMenu">About</a>
+        <a href="#menu"    @click="closeMenu">Menu</a>
+        <a href="#contact" @click="closeMenu">Contact</a>
+      </div>
+
+      <section class="hero">
+        <div class="hero-content">
+          <p class="hero-eyebrow">Lagos · Abuja · Port Harcourt</p>
+          <h1 class="hero-title">Food That Brings People Together</h1>
+          <p class="hero-subtitle">
+            Professional catering for weddings, corporate events, birthdays,
+            and every celebration worth remembering. Fresh ingredients,
+            authentic flavours, flawless service.
+          </p>
+          <button class="cta-button" @click="scrollToContact">Book Your Event</button>
+        </div>
+      </section>
+
+      <section id="about" class="about-section">
+
+        <div class="about-grid">
+
+          <div class="about-text">
+            <p class="section-eyebrow">Our Story</p>
+            <h2>A Family Recipe, A Professional Service</h2>
+            <p>
+              Mama's Table was born in a small Lagos kitchen in 2012, when founder
+              <b>Matara</b> began cooking for neighbours' celebrations out of sheer
+              love for feeding people well. Word spread quickly from one street
+              party to a full wedding, and from that wedding to corporate boardrooms
+              across the city.
+            </p>
+            <p>
+              Today, our team of 20 trained chefs and event coordinators serves
+              hundreds of guests at occasions across Nigeria. We bring the same
+              warmth, precision, and bold flavours that started it all whether
+              we're plating for 30 or catering a gala for 3,000.
+            </p>
+            <p>
+              Every menu is custom-built for your event. We source ingredients
+              locally, cook everything fresh on the day, and stay until the last
+              plate is cleared. Your celebration is our priority from the first
+              enquiry to the final bite.
+            </p>
+          </div>
+
+          <div class="stats-col">
+          
+            <div class="stat-card" v-for="stat in stats" :key="stat.label">
+              <span class="stat-number">{{ stat.number }}</span>
+              <span class="stat-label">{{ stat.label }}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="testimonial-strip">
+          <div class="testimonial" v-for="t in testimonials" :key="t.author">
+            <p class="testimonial-quote">"{{ t.quote }}"</p>
+            <p class="testimonial-author">— {{ t.author }}</p>
+          </div>
+        </div>
+
+      </section>
+
+      <section id="menu" class="menu-section">
+        <p class="section-eyebrow">What We Serve</p>
+        <h2>Sample Menu</h2>
+        <p class="section-sub">Every dish made fresh for your occasion. Menus are fully customisable.</p>
+
+        <div class="filter-row">
+          <button
+            v-for="cat in categories"
+            :key="cat"
+            class="filter-btn"
+            :class="{ active: activeCategory === cat }"
+            @click="activeCategory = cat"
+          >
+            {{ cat }}
+          </button>
+        </div>
+
+        <div class="menu-grid">
+          <div
+            class="menu-card"
+            v-for="item in menuItems"
+            :key="item.name"
+            v-show="activeCategory === 'All' || item.category === activeCategory"
+          >
+            <span class="menu-emoji">{{ item.emoji }}</span>
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.description }}</p>
+            <span class="menu-tag">{{ item.category }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="why-section">
+        <p class="section-eyebrow">Why Choose Us</p>
+        <h2>The Mama's Table Difference</h2>
+        <div class="why-grid">
+          <div class="why-card" v-for="w in whyUs" :key="w.title">
+            <span class="why-icon">{{ w.icon }}</span>
+            <h3>{{ w.title }}</h3>
+            <p>{{ w.text }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="contact-section">
+        <p class="section-eyebrow">Get In Touch</p>
+        <h2>Book Your Event</h2>
+        <p class="section-sub">
+          Fill in the form below and our team will respond within 24 hours
+          with a personalised quote for your event.
+        </p>
+
+        <div class="contact-form">
+          <div class="form-row">
+            <input v-model="form.name"   type="text"   placeholder="Your full name *" />
+            <input v-model="form.email"  type="email"  placeholder="Your email address *" />
+          </div>
+          <div class="form-row">
+            <input v-model="form.event"  type="text"   placeholder="Type of event (e.g. wedding, birthday)" />
+            <input v-model="form.guests" type="number" placeholder="Estimated number of guests" />
+          </div>
+          <textarea v-model="form.message" placeholder="Tell us more: date, location, dietary needs, special requests..."></textarea>
+
+          <button class="cta-button" @click="submitForm">Send Enquiry</button>
+
+          <!-- v-if: this paragraph only appears after formSubmitted becomes true -->
+          <p class="success-msg" v-if="formSubmitted">
+            ✅ Thanks, {{ form.name }}! We'll be in touch at {{ form.email }} within 24 hours.
+          </p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <div class="footer-brand">
+            <span class="footer-logo">🍽️ Tara's Kitchen</span>
+            <p>Authentic Nigerian catering for every occasion.</p>
+          </div>
+          <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#menu">Menu</a>
+            <a href="#contact">Book</a>
+          </div>
+          <div class="footer-contact">
+            <p>📞 +234 801 234 5678</p>
+            <p>✉️ thebrandmatara@gmail.com</p>
+            <p>📍 Lagos, Abuja, Port Harcourt</p>
+          </div>
+        </div>
+        <p class="footer-copy">© 2026 Mama's Table Catering Ltd. All rights reserved.</p>
+      </footer>
+
+    </div>
+
+    <script src="index.js"></script>
+
+  </body>
+</html>
