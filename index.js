@@ -126,7 +126,7 @@ const app = Vue.createApp({
         return;
       }
 
-      emailjs.send('service_hwjef9g', 'template_a3sr6oj', {
+      emailjs.send('service_hwjef9g', 'template_ppmovg7', {
         from_name: this.form.name,
         from_email: this.form.email,
         event_type: this.form.event,
