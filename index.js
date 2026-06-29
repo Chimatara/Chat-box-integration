@@ -143,6 +143,10 @@ const app = Vue.createApp({
           guests:  "",
           message: "",
         };
+
+        setTimeout(() => {
+          this.formSubmitted = false;
+        }, 30000);
       }).catch((error) => {
         alert("Error sending form. Please try again.");
         console.error("EmailJS error:", error);
